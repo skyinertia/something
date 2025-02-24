@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '6.3'
+ver = '1.1'
 
 Players = game:GetService("Players")
 
@@ -6632,7 +6632,7 @@ end
 
 IYMouse.Move:Connect(checkTT)
 
-task.spawn(function()
+--[[task.spawn(function()
 	if pcall(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/version'))() end) then
 		if ver ~= Version then
 			notify('Outdated','Get the new version at infinite.yiff.gg')
@@ -6720,7 +6720,7 @@ task.spawn(function()
 			end)
 		end
 	end
-end)
+end)]]--
 
 wait()
 Credits:TweenPosition(UDim2.new(0,0,0.9,0), "Out", "Quart", 0.2)
