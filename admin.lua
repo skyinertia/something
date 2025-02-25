@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '1.1'
+ver = '1.2'
 
 Players = game:GetService("Players")
 
@@ -217,7 +217,7 @@ Title.BorderSizePixel = 0
 Title.Size = UDim2.new(0, 250, 0, 20)
 Title.Font = Enum.Font.SourceSans
 Title.TextSize = 18
-Title.Text = "Player Flight FE v1.1"
+Title.Text = "FE Admin v1.2"
 Title.TextColor3 = Color3.new(1, 1, 1)
 Title.ZIndex = 10
 table.insert(shade1,Title)
@@ -4362,6 +4362,10 @@ CMDs[#CMDs + 1] = {NAME = 'fly [speed]', DESC = 'Enables player flight'}
 CMDs[#CMDs + 1] = {NAME = 'unfly', DESC = 'Disables player fly'}
 CMDs[#CMDs + 1] = {NAME = 'flyspeed [num]', DESC = 'Set fly speed (default is 1)'}
 CMDs[#CMDs + 1] = {NAME = 'qefly [true / false]', DESC = 'Enables or disables the Q (down) and E (up) hotkeys for fly'}
+CMDs[#CMDs + 1] = {NAME = 'goto [plr]', DESC = 'Teleport to a player'}
+CMDs[#CMDs + 1] = {NAME = 'loopgoto [plr] [distance] [delay]', DESC = 'Loop teleport to a player'}
+CMDs[#CMDs + 1] = {NAME = 'unloopgoto', DESC = 'Stops teleporting you to a player'}
+CMDs[#CMDs + 1] = {NAME = 'breakvelocity', DESC = 'Sets your characters velocity to 0'}
 wait()
 
 for i = 1, #CMDs do
@@ -6067,6 +6071,55 @@ end)
 
 addcmd('unfly',{'nofly','novfly','unvehiclefly','novehiclefly','unvfly'},function(args, speaker)
 	NOFLY()
+end)
+
+addcmd('goto',{'to'},function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players)do
+		if Players[v].Character ~= nil then
+			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
+				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+				wait(.1)
+			end
+			getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame + Vector3.new(3,1,0)
+		end
+	end
+	execCmd('breakvelocity')
+end)
+
+local loopgoto = nil
+addcmd('loopgoto',{},function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players)do
+		loopgoto = nil
+		if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
+			speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+			wait(.1)
+		end
+		loopgoto = Players[v]
+		local distance = 3
+		if args[2] and isNumber(args[2]) then
+			distance = args[2]
+		end
+		local lDelay = 0
+		if args[3] and isNumber(args[3]) then
+			lDelay = args[3]
+		end
+		repeat
+			if Players:FindFirstChild(v) then
+				if Players[v].Character ~= nil then
+					getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame + Vector3.new(distance,1,0)
+				end
+				wait(lDelay)
+			else
+				loopgoto = nil
+			end
+		until loopgoto ~= Players[v]
+	end
+end)
+
+addcmd('unloopgoto',{'noloopgoto'},function(args, speaker)
+	loopgoto = nil
 end)
 
 updateColors(currentShade1,shade1)
